@@ -1,0 +1,6 @@
+.env
+*.pyc
+__pycache__/
+*.db
+DigiCertGlobalRootCA.crt.pem
+venv/
