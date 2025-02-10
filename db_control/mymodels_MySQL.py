@@ -1,6 +1,6 @@
 from sqlalchemy import String, Integer
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-# from datetime import datetime
+from datetime import datetime
 
 
 class Base(DeclarativeBase):
@@ -9,7 +9,7 @@ class Base(DeclarativeBase):
 
 class Customers(Base):
     __tablename__ = 'customers'
-    customer_id: Mapped[str] = mapped_column(String(10), primary_key=True)
+    customer_id: Mapped[str] = mapped_column(String(36), primary_key=True)  #string(10)を（36）に修正
     customer_name: Mapped[str] = mapped_column(String(100))
     age: Mapped[int] = mapped_column(Integer)
     gender: Mapped[str] = mapped_column(String(10))
