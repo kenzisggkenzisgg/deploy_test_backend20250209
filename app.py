@@ -62,7 +62,8 @@ def create_customer(customer: Customer):
 '''
 @app.get("/allcustomers")
 def read_all_customer():
-    result = crud.myselectAll(mymodels.Customers)
+    #result = crud.myselectAll(mymodels.Customers)
+    result = crud.myselectAll(Customers)  #20250211修正
     # 結果がNoneの場合は空配列を返す
     if not result:
         return []
@@ -71,7 +72,7 @@ def read_all_customer():
 
 @app.get("/customers")
 def read_one_customer(customer_id: str = Query(...)):
-    #result = crud.myselect(mymodels.Customers, customer_id)
+    #result = crud.myselect(mymodels.Customers, customer_id) 
     result = crud.myselect(Customers, customer_id) #20250211修正
     if not result:
         raise HTTPException(status_code=404, detail="Customer not found")
@@ -95,15 +96,18 @@ def create_customer(customer: Customer):
         print(f"Attempt {attempts}: generated_id: {generated_id}")
 
         # IDが存在しない場合のみ処理を続行
-        if generated_id != crud.myselect(mymodels.Customers, generated_id):
+        #if generated_id != crud.myselect(mymodels.Customers, generated_id):
+        if generated_id != crud.myselect(Customers, generated_id):    #20250211修正
             # 受け取ったデータにcustomer_idを追加
             values = customer.dict()
             values["customer_id"] = generated_id
             print("values:", values)
 
             # データベースに保存
-            tmp = crud.myinsert(mymodels.Customers, values)
-            result = crud.myselect(mymodels.Customers, generated_id)
+            #tmp = crud.myinsert(mymodels.Customers, values)
+            tmp = crud.myinsert(Customers, values)    #20250211修正
+            #result = crud.myselect(mymodels.Customers, generated_id)
+            result = crud.myselect(Customers, generated_id)    #20250211修正
 
             if result:
                 result_obj = json.loads(result)
@@ -127,8 +131,10 @@ def update_customer(customer_id: str, customer: CustomerUpdate): #20250211修正
     # エラー②: frontendから正しく値を受け取れているか確認
     print("Received PUT request:", values)  # 🔍 デバッグ用ログ
     values_original = values.copy()
-    tmp = crud.myupdate(mymodels.Customers, values)
-    result = crud.myselect(mymodels.Customers, values_original.get("customer_id"))
+    #tmp = crud.myupdate(mymodels.Customers, values)
+    tmp = crud.myupdate(Customers, values)    #20250211修正
+    #result = crud.myselect(mymodels.Customers, values_original.get("customer_id"))
+    result = crud.myselect(mymodels.Customers, values_original.get("customer_id"))   #20250211修正
     if not result:
         raise HTTPException(status_code=404, detail="Customer not found")
     result_obj = json.loads(result)
@@ -137,8 +143,8 @@ def update_customer(customer_id: str, customer: CustomerUpdate): #20250211修正
 
 @app.delete("/customers")
 def delete_customer(customer_id: str = Query(...)):
-    result = crud.mydelete(mymodels.Customers, customer_id)
-    if not result:
+    #result = crud.mydelete(mymodels.Customers, customer_id)
+    result = crud.mydelete(Customers, customer_id)   #20250211修正
         raise HTTPException(status_code=404, detail="Customer not found")
     return {"customer_id": customer_id, "status": "deleted"}
 

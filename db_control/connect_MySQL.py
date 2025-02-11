@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 
 # 環境変数の読み込み
 base_path = Path(__file__).parents[1]  # backendディレクトリへのパス
-# env_path = base_path / '.env'
-# load_dotenv(dotenv_path=env_path)
+env_path = base_path / '.env'      #20250211コメントアウト外し
+load_dotenv(dotenv_path=env_path)   #20250211コメントアウト外し
 
 # データベース接続情報
 DB_USER = os.getenv('DB_USER')

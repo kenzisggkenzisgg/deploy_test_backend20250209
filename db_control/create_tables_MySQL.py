@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, Column, Integer, String, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-# mymodels_MySQL から Base クラスと Customers モデルをインポート
+# mymodels_MySQL から Base クラスと Customers モデルをインポート　20250211追記
 from db_control.mymodels_MySQL import Base, Customers  
 
 
