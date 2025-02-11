@@ -4,7 +4,7 @@ from pydantic import BaseModel
 import requests
 import json
 # from db_control import crud, mymodels
-f#rom db_control import crud, mymodels
+#from db_control import crud, mymodels
 from db_control import crud
 from db_control.mymodels_MySQL import Customers  # `mymodels` → `mymodels_MySQL`20250211修正
 
