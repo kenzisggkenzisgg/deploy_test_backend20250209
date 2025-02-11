@@ -3,22 +3,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests
 import json
+# from db_control import crud, mymodels
 from db_control import crud, mymodels
-
-
-# UUIDを生成するためのライブラリをインポート
-import uuid
-
-
 # MySQLのテーブル作成
-from db_control.create_tables import init_db
+# from db_control.create_tables import init_db
 
 # # アプリケーション初期化時にテーブルを作成
-init_db()
+# init_db()
 
 
 class Customer(BaseModel):
-    #customer_id: str  # customer_idを除外（自動生成するため）
+    customer_id: str
     customer_name: str
     age: int
     gender: str
@@ -39,7 +34,7 @@ app.add_middleware(
 def index():
     return {"message": "FastAPI top page!"}
 
-'''
+
 @app.post("/customers")
 def create_customer(customer: Customer):
     values = customer.dict()
@@ -50,7 +45,6 @@ def create_customer(customer: Customer):
         result_obj = json.loads(result)
         return result_obj if result_obj else None
     return None
-'''
 
 
 @app.get("/customers")
@@ -70,49 +64,9 @@ def read_all_customer():
     # JSON文字列をPythonオブジェクトに変換
     return json.loads(result)
 
-@app.post("/customers")
-def create_customer(customer: Customer):
 
-    # 最大試行回数を設定
-    MAX_ATTEMPTS = 3
-    attempts = 0
-
-    while attempts < MAX_ATTEMPTS:
-        # 試行回数をインクリメント
-        attempts += 1
-
-        # UUIDを生成
-        generated_id = str(uuid.uuid4())
-        print(f"Attempt {attempts}: generated_id: {generated_id}")
-
-        # IDが存在しない場合のみ処理を続行
-        if generated_id != crud.myselect(mymodels.Customers, generated_id):
-            # 受け取ったデータにcustomer_idを追加
-            values = customer.dict()
-            values["customer_id"] = generated_id
-            print("values:", values)
-
-            # データベースに保存
-            tmp = crud.myinsert(mymodels.Customers, values)
-            result = crud.myselect(mymodels.Customers, generated_id)
-
-            if result:
-                result_obj = json.loads(result)
-                return result_obj[0] if result_obj else None
-            return None
-
-    # 最大試行回数を超えた場合はエラーを返す
-    raise HTTPException(
-        status_code=500,
-        detail="Failed to generate unique ID after maximum attempts"
-    )
-
-'''   
 @app.put("/customers")
 def update_customer(customer: Customer):
-'''
-@app.put("/customers/{customer_id}")
-def update_customer(customer_id: str, customer: CustomerUpdate): #20250209修正
     values = customer.dict()
     values_original = values.copy()
     tmp = crud.myupdate(mymodels.Customers, values)
