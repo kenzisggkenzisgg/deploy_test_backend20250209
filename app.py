@@ -143,8 +143,9 @@ def update_customer(customer_id: str, customer: CustomerUpdate): #20250211修正
 
 @app.delete("/customers")
 def delete_customer(customer_id: str = Query(...)):
-    #result = crud.mydelete(mymodels.Customers, customer_id)
+    #result = crud.mydelete(mymodels.Customers, customer_id) 
     result = crud.mydelete(Customers, customer_id)   #20250211修正
+    if not result:
         raise HTTPException(status_code=404, detail="Customer not found")
     return {"customer_id": customer_id, "status": "deleted"}
 
