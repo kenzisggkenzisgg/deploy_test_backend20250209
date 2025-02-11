@@ -9,7 +9,7 @@ from db_control import crud
 from db_control.mymodels_MySQL import Customers  # `mymodels` → `mymodels_MySQL`20250211修正
 
 # MySQLのテーブル作成
-from db_control.create_tables import init_db #　20250211コメントアウト外し
+from db_control.create_tables_MySQL import init_db #　20250211コメントアウト外し
 
 # # アプリケーション初期化時にテーブルを作成
 init_db() #20250211コメントアウト外し
