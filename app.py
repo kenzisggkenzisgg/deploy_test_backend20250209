@@ -4,14 +4,17 @@ from pydantic import BaseModel
 import requests
 import json
 # from db_control import crud, mymodels
-from db_control import crud, mymodels
+f#rom db_control import crud, mymodels
+from db_control import crud
+from db_control.mymodels_MySQL import Customers  # `mymodels` → `mymodels_MySQL`20250211修正
+
 # MySQLのテーブル作成
 from db_control.create_tables import init_db #　20250211コメントアウト外し
 
 # # アプリケーション初期化時にテーブルを作成
 init_db() #20250211コメントアウト外し
 
-# UUIDを生成するためのライブラリをインポート 20250211追記追記
+# UUIDを生成するためのライブラリをインポート 20250211追記
 import uuid
 
 class Customer(BaseModel):
@@ -68,7 +71,8 @@ def read_all_customer():
 
 @app.get("/customers")
 def read_one_customer(customer_id: str = Query(...)):
-    result = crud.myselect(mymodels.Customers, customer_id)
+    #result = crud.myselect(mymodels.Customers, customer_id)
+    result = crud.myselect(Customers, customer_id) #20250211修正
     if not result:
         raise HTTPException(status_code=404, detail="Customer not found")
     result_obj = json.loads(result)

@@ -1,4 +1,5 @@
-from mymodels import Base  # User, Comment
+#from mymodels import Base  # User, Comment
+from db_control.mymodels_MySQL import Base #20250211修正
 from connect import engine
 
 import platform

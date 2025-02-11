@@ -4,6 +4,10 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, Column, Integer, String, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 
+# mymodels_MySQL から Base クラスと Customers モデルをインポート
+from db_control.mymodels_MySQL import Base, Customers  
+
+
 # 環境変数の読み込み
 base_path = Path(__file__).parents[1]  # backendディレクトリへのパス
 env_path = base_path / '.env'
@@ -36,8 +40,44 @@ engine = create_engine(
 )
 
 # Baseクラスの作成
-Base = declarative_base()
+#Base = declarative_base()  20250211コメントアウト
 
+
+#  mymodels_MySQL から取得した Base クラスを使ってテーブルを作成
+Base.metadata.create_all(engine)
+
+# セッションの作成
+Session = sessionmaker(bind=engine)
+session = Session()
+
+def add_test_data():
+   # 既存のデータを削除
+   with engine.connect() as connection:
+       connection.execute(text("DELETE FROM customers"))
+       connection.commit()
+   
+   test_customers = [
+       Customers(customer_id='C1111', customer_name='ああ', age=6, gender='男'),
+       Customers(customer_id='C110', customer_name='桃太郎', age=30, gender='女')
+   ]
+   
+   for customer in test_customers:
+       session.add(customer)
+   
+   try:
+       session.commit()
+       print("テストデータを追加しました")
+   except Exception as e:
+       session.rollback()
+       print(f"エラーが発生しました: {e}")
+   finally:
+       session.close()
+
+# ✅ 修正：mymodels_MySQL のデータを使用するように変更
+if __name__ == "__main__":
+    add_test_data()  # テストデータの追加を実行
+
+''' 20250211コメントアウト
 # テーブルの定義
 class Customer(Base):
    __tablename__ = 'customers'
@@ -84,3 +124,4 @@ def add_test_data():
 # この行を追加
 if __name__ == "__main__":
     add_test_data()  # テストデータの追加を実行
+'''
