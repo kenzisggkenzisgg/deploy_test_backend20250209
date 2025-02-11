@@ -88,7 +88,6 @@ def myupdate(mymodel, values):
 
     customer_id = values.pop("customer_id")
 
-#queryを正しく記入
     query = (
         update(mymodel)
         .where(mymodel.customer_id == customer_id)

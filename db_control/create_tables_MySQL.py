@@ -6,8 +6,8 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 # 環境変数の読み込み
 base_path = Path(__file__).parents[1]  # backendディレクトリへのパス
-env_path = base_path / '.env'
-load_dotenv(dotenv_path=env_path)
+#env_path = base_path / '.env'　　# コメントアウト20250211
+#load_dotenv(dotenv_path=env_path) # コメントアウト20250211
 
 # データベース接続情報
 DB_USER = os.getenv('DB_USER')
