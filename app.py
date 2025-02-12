@@ -126,22 +126,21 @@ def create_customer(customer: Customer):
 def update_customer(customer: Customer):
 '''
 @app.put("/customers/{customer_id}")
-def update_customer(customer_id: str, customer: CustomerUpdate):
-    values = customer.dict()
-    print("Received PUT request:", values)  # デバッグ用ログ
+def update_customer(customer_id: str, customer: CustomerUpdate): #20250209修正
 
+    values = customer.dict()
+
+    # エラー②: frontendから正しく値を受け取れているか確認
+    print("Received PUT request:", values)  # 🔍 デバッグ用ログ
+
+
+    values_original = values.copy()
     tmp = crud.myupdate(Customers, values)
-    result = crud.myselect(Customers, values.get("customer_id"))
-    
+    result = crud.myselect(Customers, values_original.get("customer_id"))
     if not result:
         raise HTTPException(status_code=404, detail="Customer not found")
-    
     result_obj = json.loads(result)
-    
-    if not result_obj:
-        raise HTTPException(status_code=500, detail="Failed to retrieve updated customer data")
-    
-    return {"message": "Customer updated successfully", "customer": result_obj[0]}  # 明示的なレスポンスを返す
+    return result_obj[0] if result_obj else None
 
 
 '''
