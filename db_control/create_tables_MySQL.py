@@ -1,81 +1,36 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-from sqlalchemy import create_engine, Column, Integer, String, text
-from sqlalchemy.orm import declarative_base, sessionmaker
-
-# mymodels_MySQL から Base クラスと Customers モデルをインポート　20250211追記
-from db_control.mymodels_MySQL import Base, Customers  
-
+from sqlalchemy import inspect  # ← こちらのみ残す
+from db_control.mymodels_MySQL import Base, Customers  # mymodels_MySQL から Base と Customers をインポート
+from db_control.connect_MySQL import engine  # `connect_MySQL.py` から engine を使用
 
 # 環境変数の読み込み
 base_path = Path(__file__).parents[1]  # backendディレクトリへのパス
 env_path = base_path / '.env'
 load_dotenv(dotenv_path=env_path)
 
-# データベース接続情報
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_HOST = os.getenv('DB_HOST')
-DB_PORT = os.getenv('DB_PORT', '3306')  # デフォルト値を設定
-DB_NAME = os.getenv('DB_NAME')
+def init_db():
+    """ データベースのテーブルを作成する関数 """
+    inspector = inspect(engine)
+    existing_tables = inspector.get_table_names()
 
-# SSL証明書のパス
-ssl_cert = str(base_path / 'DigiCertGlobalRootCA.crt.pem')
+    print("Checking tables...")
 
-# MySQLのURL構築
-DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    # customersテーブルが存在しない場合のみ作成
+    if 'customers' not in existing_tables:
+        print("Creating tables >>> ")
+        try:
+            Base.metadata.create_all(bind=engine)
+            print("Tables created successfully!")
+        except Exception as e:
+            print(f"Error creating tables: {e}")
+            raise
+    else:
+        print("Tables already exist.")
 
-# エンジンの作成（SSL設定を追加）
-engine = create_engine(
-   DATABASE_URL,
-   connect_args={
-       "ssl": {
-           "ssl_ca": ssl_cert
-       }
-   },
-   echo=True,
-   pool_pre_ping=True,
-   pool_recycle=3600
-)
-
-# Baseクラスの作成
-#Base = declarative_base()  20250211コメントアウト
-
-
-#  mymodels_MySQL から取得した Base クラスを使ってテーブルを作成
-Base.metadata.create_all(engine)
-
-# セッションの作成
-Session = sessionmaker(bind=engine)
-session = Session()
-
-def add_test_data():
-   # 既存のデータを削除
-   with engine.connect() as connection:
-       connection.execute(text("DELETE FROM customers"))
-       connection.commit()
-   
-   test_customers = [
-       Customers(customer_id='C1111', customer_name='ああ', age=6, gender='男'),
-       Customers(customer_id='C110', customer_name='桃太郎', age=30, gender='女')
-   ]
-   
-   for customer in test_customers:
-       session.add(customer)
-   
-   try:
-       session.commit()
-       print("テストデータを追加しました")
-   except Exception as e:
-       session.rollback()
-       print(f"エラーが発生しました: {e}")
-   finally:
-       session.close()
-
-# ✅ 修正：mymodels_MySQL のデータを使用するように変更
 if __name__ == "__main__":
-    add_test_data()  # テストデータの追加を実行
+    init_db()
 
 ''' 20250211コメントアウト
 # テーブルの定義
