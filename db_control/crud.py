@@ -87,8 +87,13 @@ def myupdate(mymodel, values):
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    customer_id = values.pop("customer_id")
+    #customer_id = values.pop("customer_id")
+    customer_id = values.get("customer_id")
 
+    if not customer_id:   #デバック
+        print("🚨 customer_id is missing in values!")
+        return None
+        
     #query = "お見事！E0002の原因はこのクエリの実装ミスです。正しく実装しましょう"
     query = (
         update(mymodel)
