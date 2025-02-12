@@ -29,8 +29,8 @@ def init_db():
     else:
         print("Tables already exist.")
 
-if __name__ == "__main__":
-    init_db()
+#if __name__ == "__main__":  20250212コメントアウト
+    #init_db()
 
 ''' 20250211コメントアウト
 # テーブルの定義

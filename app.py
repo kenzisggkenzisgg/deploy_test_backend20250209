@@ -11,9 +11,6 @@ from db_control.mymodels_MySQL import Customers  # `mymodels` → `mymodels_MySQ
 # MySQLのテーブル作成
 from db_control.create_tables_MySQL import init_db #　20250211コメントアウト外し
 
-# # アプリケーション初期化時にテーブルを作成
-init_db() #20250211コメントアウト外し
-
 # UUIDを生成するためのライブラリをインポート 20250211追記
 import uuid
 
@@ -32,6 +29,9 @@ class CustomerUpdate(BaseModel):
 
 
 app = FastAPI()
+
+# # アプリケーション初期化時にテーブルを作成
+init_db() #20250211コメントアウト外し
 
 # CORSミドルウェアの設定
 app.add_middleware(
@@ -134,7 +134,7 @@ def update_customer(customer_id: str, customer: CustomerUpdate): #20250211修正
     #tmp = crud.myupdate(mymodels.Customers, values)
     tmp = crud.myupdate(Customers, values)    #20250211修正
     #result = crud.myselect(mymodels.Customers, values_original.get("customer_id"))
-    result = crud.myselect(mymodels.Customers, values_original.get("customer_id"))   #20250211修正
+    result = crud.myselect(Customers, values_original.get("customer_id"))   #20250211修正
     if not result:
         raise HTTPException(status_code=404, detail="Customer not found")
     result_obj = json.loads(result)
