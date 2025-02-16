@@ -23,7 +23,13 @@ from dotenv import load_dotenv
 
 # 環境変数の読み込み
 #load_dotenv(dotenv_path="../frontend/.env")
-load_dotenv(".env.local")
+#load_dotenv(".env.local")  20250216コメントアウト
+
+# 環境変数の読み込み 20250216追記
+base_path = Path(__file__).parents[1]  # backendディレクトリへのパス
+env_path = base_path / '.env'      
+load_dotenv(dotenv_path=env_path)   
+
 
 # データベース接続情報
 DB_USER = os.getenv('DB_USER')
@@ -38,13 +44,28 @@ ssl_cert = str(base_path / 'DigiCertGlobalRootCA.crt.pem')
 # MySQLのURL構築
 DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
-# エンジンの作成
+# エンジンの作成（SSL設定を追加）　20250216追記
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={
+        "ssl": {
+            "ssl_ca": ssl_cert
+        }
+    },
+    echo=True,
+    pool_pre_ping=True,
+    pool_recycle=3600
+)
+
+# エンジンの作成　20250216コメントアウト
+'''
 engine = create_engine(
     DATABASE_URL,
     echo=True,
     pool_pre_ping=True,
     pool_recycle=3600
 )
+'''
 
 print(f"DB_USER: {DB_USER}")
 print(f"DB_HOST: {DB_HOST}")
