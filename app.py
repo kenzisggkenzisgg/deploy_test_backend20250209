@@ -34,7 +34,7 @@ app = FastAPI()
 # CORSミドルウェアの設定
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -116,6 +116,7 @@ def create_customer(customer: Customer):
 @app.put("/customers")
 def update_customer(customer: CustomerUpdate):
 '''
+'''
 @app.put("/customers/{customer_id}")
 def update_customer(customer_id: str, customer: CustomerUpdate): #20250209修正
 
@@ -132,6 +133,22 @@ def update_customer(customer_id: str, customer: CustomerUpdate): #20250209修正
         raise HTTPException(status_code=404, detail="Customer not found")
     result_obj = json.loads(result)
     return result_obj[0] if result_obj else None
+'''
+@app.put("/customers")
+def update_customer(customer: CustomerUpdate):
+    values = customer.dict()
+
+    # エラー②: frontendから正しく値を受け取れているか確認
+    print("frontendから受け取ったvalues:", values)
+
+    values_original = values.copy()
+    tmp = crud.myupdate(mymodels.Customers, values)
+    result = crud.myselect(mymodels.Customers, values_original.get("customer_id"))
+    if not result:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    result_obj = json.loads(result)
+    return result_obj[0] if result_obj else None
+
 
 @app.delete("/customers")
 def delete_customer(customer_id: str = Query(...)):
