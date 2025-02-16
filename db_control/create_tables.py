@@ -12,9 +12,19 @@ Base.metadata.create_all(bind=engine)
 '''
 
 #MySQLにつなぐ場合
+# 20250216 3行追記
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
 from db_control.mymodels import Base
 from db_control.connect import engine
 from sqlalchemy import inspect
+
+# 環境変数の読み込み 20250216追記
+base_path = Path(__file__).parents[1]  # backendディレクトリへのパス
+env_path = base_path / '.env'
+load_dotenv(dotenv_path=env_path)
 
 
 def init_db():
