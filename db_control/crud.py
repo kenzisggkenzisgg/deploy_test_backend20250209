@@ -9,9 +9,8 @@ from sqlalchemy.orm import sessionmaker
 import json
 import pandas as pd
 
-from db_control.connect_MySQL import engine
-#from db_control.mymodels import Customers
-from db_control.mymodels_MySQL import Customers #20250211修正
+from db_control.connect import engine
+from db_control.mymodels import Customers
 
 
 def myinsert(mymodel, values):
@@ -87,20 +86,13 @@ def myupdate(mymodel, values):
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    #customer_id = values.pop("customer_id")
-    customer_id = values.get("customer_id")
+    customer_id = values.pop("customer_id")
 
-    if not customer_id:   #デバック
-        print("🚨 customer_id is missing in values!")
-        return None
-        
-    #query = "お見事！E0002の原因はこのクエリの実装ミスです。正しく実装しましょう"
     query = (
         update(mymodel)
         .where(mymodel.customer_id == customer_id)
         .values(values)
     )
-
     try:
         # トランザクションを開始
         with session.begin():
