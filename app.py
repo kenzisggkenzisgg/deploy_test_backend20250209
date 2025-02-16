@@ -134,7 +134,7 @@ def update_customer(customer_id: str, customer: CustomerUpdate): #20250209修正
     result_obj = json.loads(result)
     return result_obj[0] if result_obj else None
 '''
-@app.put("/customers/{customer_id}")
+@app.put("/customers")
 def update_customer(customer: CustomerUpdate):
     values = customer.dict()
 
