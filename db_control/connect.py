@@ -21,14 +21,17 @@ from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv
 
+# 20250216追記
+from pathlib import Path
+
 # 環境変数の読み込み
 #load_dotenv(dotenv_path="../frontend/.env")
 #load_dotenv(".env.local")  20250216コメントアウト
 
 # 環境変数の読み込み 20250216追記
 base_path = Path(__file__).parents[1]  # backendディレクトリへのパス
-env_path = base_path / '.env'      
-load_dotenv(dotenv_path=env_path)   
+#env_path = base_path / '.env'      
+#load_dotenv(dotenv_path=env_path)   
 
 
 # データベース接続情報
